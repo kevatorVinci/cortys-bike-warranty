@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Sauvegardes et données locales
+*.zip
+*.dump
+*.sql
+*.bak
+filestore/
+
+# Configuration locale et secrets
+.env
+odoo.conf
+
+# IDE
+.idea/
+.vscode/
