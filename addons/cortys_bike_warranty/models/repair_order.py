@@ -66,7 +66,6 @@ class RepairOrder(models.Model):
                 ("state", "=", "done"),
                 ("picking_code", "=", "outgoing"),
                 ("location_dest_usage", "=", "customer"),
-                ("picking_id.sale_id", "!=", False),
             ]
             if order.partner_id:
                 domain.append(("picking_partner_id", "=", order.partner_id.id))
