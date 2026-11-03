@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.form.warranty</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="warranty_duration_months" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="repair_order_form_view_warranty" model="ir.ui.view">
+        <field name="name">repair.order.form.warranty</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-success" role="alert"
+                    invisible="warranty_status != 'covered'">
+                    <strong>Sous garantie</strong> jusqu'au
+                    <field name="warranty_end_date" readonly="1" nolabel="1" class="oe_inline" />
+                </div>
+                <div class="alert alert-warning" role="alert"
+                    invisible="warranty_status != 'expired'">
+                    <strong>Hors garantie</strong>
+                </div>
+                <div class="alert alert-info" role="alert"
+                    invisible="warranty_status != 'missing'">
+                    <strong>Informations de garantie manquantes</strong>
+                </div>
+                <div class="alert alert-secondary" role="alert"
+                    invisible="warranty_status != 'none'">
+                    <strong>Aucune garantie configurée</strong>
+                </div>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_check_warranty" type="object"
+                    string="Vérifier la garantie" class="oe_highlight"
+                    invisible="state in ['cancel', 'done']"/>
+            </xpath>
+            <xpath expr="//field[@name='under_warranty']" position="after">
+                <field name="delivery_date" />
+                <field name="warranty_end_date" />
+                <field name="warranty_status" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

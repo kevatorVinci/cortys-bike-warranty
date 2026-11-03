@@ -21,7 +21,9 @@
 - Identification de la livraison initiale du vélo par numéro de série.
 - Date de fin de garantie.
 - Statut de couverture visible sur la réparation.
-- Alimentation du champ standard under_warranty.
+- Alimentation explicite du champ standard `under_warranty` par le bouton de
+  vérification, afin de conserver le mécanisme standard de tarification des
+  pièces.
 
 ## Règles à finaliser
 

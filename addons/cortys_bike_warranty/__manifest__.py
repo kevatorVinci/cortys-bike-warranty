@@ -9,7 +9,9 @@
         "repair",
         "sale_stock",
     ],
-    "data": [],
+    "data": [
+        "views/product_template_views.xml",
+    ],
     "installable": True,
     "application": False,
 }
