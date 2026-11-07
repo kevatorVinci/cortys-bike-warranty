@@ -1,4 +1,5 @@
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class RepairOrder(models.Model):
@@ -71,3 +72,57 @@ class RepairOrder(models.Model):
     def _onchange_product_clear_lot(self):
         if self.lot_id and self.lot_id not in self.customer_lot_ids:
             self.lot_id = False
+
+    @api.constrains(
+        "partner_id",
+        "product_id",
+        "lot_id",
+        "company_id",
+    )
+    def _check_customer_serial_number(self):
+        MoveLine = self.env["stock.move.line"]
+
+        for order in self:
+            if not order.lot_id:
+                continue
+
+            if not order.partner_id or not order.product_id:
+                raise ValidationError(
+                    "Choisissez le client et le produit avant "
+                    "de sélectionner un numéro de série."
+                )
+
+            if order.lot_id.product_id != order.product_id:
+                raise ValidationError(
+                    "Ce numéro de série ne correspond pas "
+                    "au produit à réparer."
+                )
+
+            partner = order.partner_id.commercial_partner_id
+            delivery_line = MoveLine.search(
+                [
+                    ("state", "=", "done"),
+                    ("lot_id", "=", order.lot_id.id),
+                    ("product_id", "=", order.product_id.id),
+                    (
+                        "picking_id.picking_type_id.code",
+                        "=",
+                        "outgoing",
+                    ),
+                    ("location_dest_id.usage", "=", "customer"),
+                    (
+                        "picking_id.partner_id.commercial_partner_id",
+                        "=",
+                        partner.id,
+                    ),
+                    ("company_id", "=", order.company_id.id),
+                ],
+                limit=1,
+            )
+
+            if not delivery_line:
+                raise ValidationError(
+                    "Numéro de série non autorisé : aucune livraison "
+                    "terminée de ce produit à ce client n'a été trouvée "
+                    "dans cette société."
+                )
